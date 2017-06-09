@@ -1,10 +1,8 @@
 package streams
 
 import org.scalatest.FunSuite
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-
 import Bloxorz._
 
 @RunWith(classOf[JUnitRunner])
@@ -65,13 +63,69 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("Block isStanding false") {
+    new Level1 {
+      val block = Block(Pos(1, 1), Pos(1, 2))
+      assert(block.isStanding === false)
+    }
+  }
+
+  test("Block isStanding true") {
+    new Level1 {
+      val block = Block(Pos(1, 1), Pos(1, 1))
+      assert(block.isStanding === true)
+    }
+  }
+
+  test("Block isLegal is true when are in terrain") {
+    new Level1 {
+      val block = Block(Pos(2, 0), Pos(2, 1))
+      assert(block.isLegal === true)
+    }
+  }
+
+  test("Block isLegal is false when are in -") {
+    new Level1 {
+      val block = Block(Pos(0, 2), Pos(0, 3))
+      assert(block.isLegal === false)
+    }
+  }
+
+  test("Block isLegal is false when are outside terrain") {
+    new Level1 {
+      val block = Block(Pos(100, 1), Pos(100, 2))
+      assert(block.isLegal === false)
+    }
+  }
+
+  test("StartBlock is in start position standing") {
+    new Level1 {
+      assert(startBlock.isStanding === true)
+      assert(startBlock.b1 === startPos && startBlock.b2 === startPos)
+    }
+  }
+
+  test("legalNeighbors when not all are legal") {
+    new Level1 {
+      val block = Block(Pos(0, 1), Pos(0, 2))
+      val neighbors: List[(Block, Move)] = block.legalNeighbors
+      assert(neighbors.size === 2)
+      assert(neighbors contains (Block(Pos(1, 1), Pos(1, 2)), Down))
+      assert(neighbors contains (Block(Pos(0, 0), Pos(0, 0)), Left))
+    }
+  }
+
+  test("done when Block is in goal") {
+    new Level1 {
+      assert(done(Block(goal, goal)) === true)
+    }
+  }
 
 	test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
     }
   }
-
 
 	test("optimal solution length for level 1") {
     new Level1 {
